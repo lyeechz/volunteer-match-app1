@@ -1,26 +1,1590 @@
-<!DOCTYPE html>
+<!-- file: index.html -->
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Volunteer Connect</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CauseCompass AI • Volunteer Match + Study Pack + Voice Brief</title>
+  <style>
+    :root{
+      --bg: #070a14;
+      --bg2:#0b1020;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --shadow: 0 14px 45px rgba(0,0,0,.35);
+      --shadow2: 0 10px 30px rgba(0,0,0,.25);
+      --r: 18px;
+      --r2: 14px;
+      --a: #7c5cff;
+      --b: #00d4ff;
+      --g: #43f59a;
+      --y: #ffcc66;
+      --red:#ff5c7a;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 12% 10%, rgba(124,92,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 80% 12%, rgba(0,212,255,.16), transparent 55%),
+        radial-gradient(1100px 900px at 30% 90%, rgba(67,245,154,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2) 30%, var(--bg));
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button, input, select, textarea{ font: inherit; color: inherit; }
+    .container{ width:min(1200px, 92vw); margin:0 auto; }
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(7,10,20,.88), rgba(7,10,20,.55));
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 0; gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; }
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: conic-gradient(from 180deg, var(--a), var(--b), var(--g), var(--a));
+      box-shadow: 0 0 0 1px rgba(255,255,255,.16), 0 8px 25px rgba(124,92,255,.28);
+    }
+    .brand small{ display:block; margin-top:2px; font-weight:650; color: var(--muted2); }
+    .actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 8px 20px rgba(0,0,0,.16);
+      cursor:pointer; user-select:none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .pill:hover{ transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.18); }
+    .pill:active{ transform: translateY(0px); }
+    .badge{
+      min-width: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      text-align: center;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .dot{ width:10px; height:10px; border-radius:999px; background: var(--g); box-shadow: 0 0 0 3px rgba(67,245,154,.18); }
+
+    /* Hero */
+    .hero{ padding: 34px 0 12px; }
+    .hero-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap: 16px; align-items:stretch; }
+    .hero-card{
+      position:relative; overflow:hidden;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(124,92,255,.20), rgba(0,212,255,.10));
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .hero-card:before{
+      content:""; position:absolute; inset:-1px; pointer-events:none; opacity:.9;
+      background:
+        radial-gradient(520px 260px at 10% 10%, rgba(255,255,255,.14), transparent 70%),
+        radial-gradient(420px 280px at 90% 20%, rgba(0,212,255,.22), transparent 60%);
+    }
+    .hero-card > *{ position:relative; z-index:1; }
+    h1{ margin:0 0 10px; font-size: clamp(24px, 3.1vw, 42px); letter-spacing: -0.6px; line-height: 1.06; }
+    .subtitle{ margin:0 0 14px; color: var(--muted); max-width: 72ch; line-height: 1.5; }
+    .cta-row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top: 12px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 12px 14px; border-radius: 14px;
+      border:0; cursor:pointer; user-select:none;
+      font-weight: 850; letter-spacing:.15px;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn-primary{
+      background: linear-gradient(135deg, var(--a), var(--b));
+      color:#071022; box-shadow: 0 10px 25px rgba(124,92,255,.26);
+    }
+    .btn-secondary{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btn-danger{
+      background: rgba(255,92,122,.12);
+      border: 1px solid rgba(255,92,122,.35);
+    }
+    .btn-ghost{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btn-sm{ padding: 10px 12px; border-radius: 12px; font-weight: 900; }
+
+    .side{
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow2);
+      padding: 18px;
+      display:flex; flex-direction:column; gap: 10px;
+    }
+    .side h3{ margin:0; font-size: 14.5px; letter-spacing:.2px; }
+    .cardish{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      padding: 12px;
+    }
+    .cardish p{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .kpi{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top: 2px; }
+    .kpi .k{ border-radius: 16px; border: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.14); padding: 12px; }
+    .k strong{ font-size: 16px; }
+    .k span{ display:block; margin-top:2px; color: var(--muted2); font-size: 12.5px; }
+
+    /* App */
+    .app{ padding: 10px 0 40px; }
+    .grid{ display:grid; grid-template-columns: 380px 1fr; gap: 16px; align-items:start; }
+    .panel{
+      position: sticky; top: 78px;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+    .ph{
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(124,92,255,.10), transparent);
+    }
+    .ph h2{ margin:0; font-size: 14.5px; letter-spacing:.2px; }
+    .ph p{ margin:6px 0 0; color: var(--muted2); font-size: 12.5px; line-height:1.4; }
+    .pb{ padding: 14px; display:grid; gap: 12px; }
+
+    .section{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      padding: 12px;
+      display:grid; gap: 10px;
+    }
+    .st{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .st h3{ margin:0; font-size: 13px; letter-spacing:.2px; }
+    .link{
+      background: transparent; border:0; color: var(--muted);
+      cursor:pointer; font-weight:800; font-size: 12px;
+      padding: 6px 8px; border-radius: 10px;
+    }
+    .link:hover{ background: rgba(255,255,255,.06); }
+
+    .field{ display:grid; gap:6px; }
+    label{ font-size: 12px; color: var(--muted2); letter-spacing:.18px; }
+    .input, select, textarea{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      outline:none;
+      transition: border-color .12s ease, background .12s ease;
+    }
+    textarea{ resize: vertical; min-height: 90px; }
+    .input:focus, select:focus, textarea:focus{
+      border-color: rgba(0,212,255,.45);
+      background: rgba(255,255,255,.08);
+    }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .toggle{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      user-select:none; cursor:pointer;
+    }
+    .toggle input{ width:18px; height:18px; }
+    .panel-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+    /* Results */
+    .results{ display:grid; gap: 12px; }
+    .head{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      padding: 14px;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow2);
+    }
+    .head .meta{ display:flex; flex-direction:column; gap:4px; }
+    .head h2{ margin:0; font-size: 16px; letter-spacing:.2px; }
+    .head p{ margin:0; color: var(--muted2); font-size: 12.5px; }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(124,92,255,.10);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .chip.alt{ background: rgba(0,212,255,.08); }
+
+    .cards{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .card{
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .card:hover{ transform: translateY(-2px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.065); }
+
+    .ctop{
+      padding: 14px 14px 0;
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 10px;
+    }
+    .card h3{ margin:0; font-size: 15px; letter-spacing:.15px; line-height:1.2; }
+    .org{ margin:6px 0 0; color: var(--muted2); font-size: 12.5px; }
+    .rank{
+      display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+      min-width: 110px;
+    }
+    .score{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(67,245,154,.35);
+      background: rgba(67,245,154,.10);
+      font-weight: 950;
+      font-size: 12px;
+      letter-spacing:.2px;
+    }
+    .bookmark{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.15);
+      width: 38px; height: 38px;
+      border-radius: 14px;
+      cursor: pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .bookmark:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
+    .bookmark[data-on="true"]{ background: rgba(67,245,154,.12); border-color: rgba(67,245,154,.40); }
+    .bookmark svg{ width: 18px; height: 18px; opacity:.92; }
+
+    .cbody{ padding: 10px 14px 14px; display:grid; gap: 10px; }
+    .desc{ margin:0; color: var(--muted); font-size: 13px; line-height:1.45; }
+    .tag-row{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tag{
+      padding: 6px 9px; border-radius: 999px;
+      font-size: 12px; font-weight: 800;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.85);
+    }
+    .tag.p{ background: rgba(124,92,255,.18); }
+    .tag.bl{ background: rgba(0,212,255,.14); }
+
+    .cfoot{
+      padding: 12px 14px 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .mini{ display:flex; flex-direction:column; gap:3px; color: var(--muted2); font-size: 12px; }
+    .mini strong{ color: rgba(255,255,255,.88); font-size: 12.5px; }
+    .open{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      cursor:pointer; font-weight: 900;
+    }
+    .open:hover{ background: rgba(255,255,255,.09); }
+
+    .empty{
+      padding: 22px;
+      border-radius: var(--r);
+      border: 1px dashed rgba(255,255,255,.20);
+      background: rgba(0,0,0,.10);
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Drawer / modal */
+    .modal-wrap{
+      position: fixed; inset: 0; display:none; place-items:center;
+      padding: 18px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+    }
+    .modal{
+      width: min(920px, 96vw);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(900px 400px at 10% 10%, rgba(124,92,255,.18), transparent 65%),
+        radial-gradient(700px 400px at 80% 10%, rgba(0,212,255,.14), transparent 62%),
+        rgba(10,14,28,.92);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .mhead{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .mhead h3{ margin:0; font-size: 14.5px; letter-spacing:.2px; }
+    .icon-btn{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      cursor: pointer;
+    }
+    .icon-btn:hover{ background: rgba(255,255,255,.09); }
+    .mbody{ padding: 14px 16px 16px; display:grid; gap: 12px; }
+
+    .two{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 12px;
+      align-items:start;
+    }
+    .box{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      padding: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .box h4{ margin:0; font-size: 13px; letter-spacing:.2px; }
+    .box p{ margin:0; color: var(--muted); font-size: 13px; line-height:1.45; }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 10px;
+      overflow:auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .flashcards{
+      display:grid;
+      gap: 8px;
+    }
+    .fc{
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      padding: 10px;
+    }
+    .fc strong{ display:block; margin-bottom: 4px; }
+    .warn{
+      border-radius: 14px;
+      border: 1px solid rgba(255,204,102,.28);
+      background: rgba(255,204,102,.10);
+      padding: 10px;
+      color: rgba(255,255,255,.86);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    footer{
+      padding: 18px 0 34px;
+      color: var(--muted2);
+      font-size: 12.5px;
+      text-align:center;
+    }
+
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr; }
+      .panel{ position: relative; top: 0; }
+      .cards{ grid-template-columns: 1fr; }
+      .two{ grid-template-columns: 1fr; }
+      .chips{ justify-content:flex-start; }
+    }
+  </style>
 </head>
+
 <body>
-<header>
-<h1>Volunteer Connect</h1>
-<p>Find volunteer opportunities that match your passion</p>
-</header>
-<section class="filters">
-<h2>Find Opportunities</h2>
-<select id="timeFilter">
-<option value="all">Any Time Commitment</option>
-<option value="short">1–2 hrs/week</option>
-<option value="medium">3–5 hrs/week</option>
-<option value="weekend">Weekends</option>
-</select>
-</section>
-<section id="opportunities" class="opportunities"></section>
-<script src="script.js"></script>
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <div class="brand" role="banner" aria-label="CauseCompass AI">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            CauseCompass AI
+            <small>AI-matched volunteering + study pack + voice briefing</small>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="pill" id="favBtn" type="button" title="Favorites">
+            <span class="dot" aria-hidden="true"></span>
+            Favorites <span class="badge" id="favCount">0</span>
+          </button>
+          <button class="pill" id="aiMatchBtnTop" type="button" title="Run AI matching (Featherless)">
+            AI Match <span class="badge" id="matchCount">—</span>
+          </button>
+          <button class="pill" id="deployTipBtn" type="button" title="Domain hosting tip">
+            .XYZ Domain Tip <span class="badge">↗</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <h1>AI that turns “I want to help” into a real plan.</h1>
+          <p class="subtitle">
+            This isn’t a chatbot. The LLM is the <b>matching engine</b>:
+            it ranks opportunities, explains fit, writes a short outreach message,
+            and produces a voice briefing—then generates Opennote flashcards so students can learn the cause fast.
+          </p>
+          <div class="cta-row">
+            <button class="btn btn-primary" id="aiMatchBtn" type="button">Run AI Match →</button>
+            <button class="btn btn-secondary" id="demoProfileBtn" type="button">Load Demo Profile ⚡</button>
+            <button class="btn btn-ghost" id="clearAllBtn" type="button">Clear</button>
+          </div>
+
+          <div class="kpi" aria-label="Project goals">
+            <div class="k">
+              <strong>Social impact</strong>
+              <span>helps students volunteer smarter</span>
+            </div>
+            <div class="k">
+              <strong>AI core system</strong>
+              <span>ranking + reasoning + outputs</span>
+            </div>
+            <div class="k">
+              <strong>3 sponsors used</strong>
+              <span>Featherless + Opennote + ElevenLabs</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side">
+          <h3>How judges can test it (fast)</h3>
+          <div class="cardish">
+            <p>
+              1) Paste keys in <b>API Setup</b> → 2) Click <b>AI Match</b> → 3) Open a match and click
+              <b>Study Pack</b> + <b>Voice Brief</b>.
+            </p>
+          </div>
+          <div class="warn">
+            Tip: For a real deployment, keep keys server-side (proxy). For hackathons, this client-only demo is acceptable.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="app">
+      <div class="grid">
+        <aside class="panel" aria-label="Profile and API setup">
+          <div class="ph">
+            <h2>Profile • Filters • APIs</h2>
+            <p>Enter your preferences, then let the AI rank + generate action steps.</p>
+          </div>
+
+          <div class="pb">
+            <div class="section" aria-label="Student Profile">
+              <div class="st">
+                <h3>Student Profile</h3>
+                <button class="link" id="resetProfileBtn" type="button">Reset</button>
+              </div>
+
+              <div class="field">
+                <label for="profile">What matters to you?</label>
+                <textarea id="profile" class="input" placeholder="Example: I like coding, I have 3-5 hrs/week, I care about education + mental health, I’m near Los Angeles, I prefer remote."></textarea>
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="time">Time available (hrs/week)</label>
+                  <select id="time">
+                    <option value="">Any</option>
+                    <option value="1">1–2</option>
+                    <option value="3">3–5</option>
+                    <option value="6">6–10</option>
+                    <option value="11">10+</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="location">Location</label>
+                  <select id="location">
+                    <option value="">Anywhere</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="cause">Cause</label>
+                  <select id="cause">
+                    <option value="">Any</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="interest">Interest</label>
+                  <select id="interest">
+                    <option value="">Any</option>
+                  </select>
+                </div>
+              </div>
+
+              <label class="toggle" for="remoteOnly">
+                <input id="remoteOnly" type="checkbox" />
+                Remote only
+              </label>
+            </div>
+
+            <div class="section" aria-label="API Setup">
+              <div class="st">
+                <h3>API Setup (Sponsors)</h3>
+                <button class="link" id="apiHelpBtn" type="button">Help</button>
+              </div>
+
+              <div class="field">
+                <label for="featherlessKey">Featherless API Key</label>
+                <input id="featherlessKey" class="input" placeholder="FEATHERLESS_API_KEY" />
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="featherlessModel">Featherless Model</label>
+                  <input id="featherlessModel" class="input" value="meta-llama/Meta-Llama-3.1-8B-Instruct" />
+                </div>
+                <div class="field">
+                  <label for="featherlessBase">Base URL</label>
+                  <input id="featherlessBase" class="input" value="https://api.featherless.ai/v1" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="opennoteKey">Opennote API Key (editable)</label>
+                <input id="opennoteKey" class="input" placeholder="OPENNOTE_API_KEY" />
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="opennoteBase">Opennote Base URL</label>
+                  <input id="opennoteBase" class="input" value="https://api.opennote.com/v1" />
+                </div>
+                <div class="field">
+                  <label for="opennoteCount">Flashcards count</label>
+                  <select id="opennoteCount">
+                    <option value="8">8</option>
+                    <option value="10" selected>10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="elevenKey">ElevenLabs xi-api-key</label>
+                <input id="elevenKey" class="input" placeholder="ELEVENLABS_XI_API_KEY" />
+              </div>
+
+              <div class="grid2">
+                <div class="field">
+                  <label for="voiceId">ElevenLabs voice_id</label>
+                  <input id="voiceId" class="input" value="JBFqnCBsd6RMkjVDRZzb" />
+                </div>
+                <div class="field">
+                  <label for="ttsModel">TTS model_id</label>
+                  <input id="ttsModel" class="input" value="eleven_multilingual_v2" />
+                </div>
+              </div>
+
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="aiMatchBtnSide" type="button">AI Match</button>
+                <button class="btn btn-secondary btn-sm" id="surpriseBtn" type="button">Surprise 🎲</button>
+                <button class="btn btn-danger btn-sm" id="wipeFavBtn" type="button">Wipe Favorites</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="results" aria-label="AI results">
+          <div class="head">
+            <div class="meta">
+              <h2 id="title">Matches</h2>
+              <p id="sub">Run AI Match to rank opportunities + generate action steps.</p>
+            </div>
+            <div class="chips" id="chips"></div>
+          </div>
+
+          <div class="cards" id="cards"></div>
+          <div class="empty" id="empty" style="display:none;">
+            <strong>No results.</strong><br/>
+            Try loosening filters or turning off “remote only”.
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div class="modal-wrap" id="modalWrap" role="dialog" aria-modal="true" aria-label="Details">
+      <div class="modal">
+        <div class="mhead">
+          <h3 id="modalTitle">Opportunity</h3>
+          <button class="icon-btn" id="closeModalBtn" type="button" title="Close">✕</button>
+        </div>
+        <div class="mbody">
+          <div class="two">
+            <div class="box">
+              <h4>AI Fit Explanation (Featherless)</h4>
+              <p id="aiReason" class="mono">Run AI Match, then open a card.</p>
+
+              <h4>Outreach Message</h4>
+              <div id="aiOutreach" class="mono">—</div>
+
+              <div class="panel-actions">
+                <a class="open" id="detailsLink" href="#" target="_blank" rel="noopener noreferrer">Details ↗</a>
+                <button class="open" id="copyOutreachBtn" type="button">Copy outreach</button>
+                <button class="open" id="voiceBtn" type="button">Voice Brief (ElevenLabs)</button>
+              </div>
+
+              <audio id="audio" controls style="width:100%; display:none;"></audio>
+            </div>
+
+            <div class="box">
+              <h4>Study Pack (Opennote Flashcards)</h4>
+              <p>Generates flashcards so students understand the cause + what they’ll do.</p>
+
+              <div class="panel-actions">
+                <button class="btn btn-primary btn-sm" id="flashcardsBtn" type="button">Generate Flashcards</button>
+                <button class="btn btn-secondary btn-sm" id="copyFlashcardsBtn" type="button">Copy as Q/A</button>
+              </div>
+
+              <div id="flashcardsStatus" class="mono">—</div>
+              <div class="flashcards" id="flashcards"></div>
+            </div>
+          </div>
+
+          <div class="warn" id="modalWarn" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="container">
+    Deploy tip: host this on your free <b>.XYZ</b> domain for extra points.
+  </footer>
+
+  <script>
+    /**
+     * CauseCompass AI
+     * - Featherless: core ranking engine (OpenAI-compatible chat completions).
+     * - Opennote: generates flashcards study pack for chosen opportunity.
+     * - ElevenLabs: voice briefing of the plan/outreach.
+     *
+     * For production: proxy these requests server-side to protect keys.
+     */
+
+    const OPPORTUNITIES = [
+      {
+        id: "opp-001",
+        title: "Beach Cleanup Crew",
+        org: "Coastline Care",
+        interests: ["Outdoor / Nature", "Community Events"],
+        causes: ["Environment"],
+        location: "Santa Monica, CA",
+        remote: false,
+        hoursPerWeek: 3,
+        tags: ["cleanup", "team", "weekends"],
+        description: "Collect trash, sort recyclables, and share quick tips with visitors to protect wildlife.",
+        url: "https://example.com/beach-cleanup"
+      },
+      {
+        id: "opp-002",
+        title: "After-School Homework Helper",
+        org: "Bright Futures Center",
+        interests: ["Teaching / Tutoring"],
+        causes: ["Education", "Equity"],
+        location: "Los Angeles, CA",
+        remote: true,
+        hoursPerWeek: 2,
+        tags: ["math", "reading", "online"],
+        description: "Tutor middle school students over video call. Short sessions, big impact.",
+        url: "https://example.com/tutoring"
+      },
+      {
+        id: "opp-003",
+        title: "Animal Shelter Socialization",
+        org: "Paws & Peace",
+        interests: ["Animals"],
+        causes: ["Health"],
+        location: "Pasadena, CA",
+        remote: false,
+        hoursPerWeek: 4,
+        tags: ["cats", "dogs", "care"],
+        description: "Help with feeding, gentle socialization, and adoption events to reduce animal stress.",
+        url: "https://example.com/animal-shelter"
+      },
+      {
+        id: "opp-004",
+        title: "Food Bank Packing Team",
+        org: "Neighbor Pantry",
+        interests: ["Community Events"],
+        causes: ["Hunger", "Equity"],
+        location: "Long Beach, CA",
+        remote: false,
+        hoursPerWeek: 5,
+        tags: ["packing", "families", "weekly"],
+        description: "Pack grocery boxes, organize shelves, and assist distribution to families.",
+        url: "https://example.com/food-bank"
+      },
+      {
+        id: "opp-005",
+        title: "Build a Nonprofit Website (Starter)",
+        org: "Civic Tech Lab",
+        interests: ["Tech / Coding", "Art / Design"],
+        causes: ["Equity", "Education"],
+        location: "Remote",
+        remote: true,
+        hoursPerWeek: 6,
+        tags: ["web", "portfolio", "team"],
+        description: "Join a small team to build an accessible website for a local nonprofit.",
+        url: "https://example.com/civic-tech"
+      },
+      {
+        id: "opp-006",
+        title: "Park Trail Restoration",
+        org: "Green Steps",
+        interests: ["Outdoor / Nature"],
+        causes: ["Environment"],
+        location: "Glendale, CA",
+        remote: false,
+        hoursPerWeek: 3,
+        tags: ["trails", "plants", "hands-on"],
+        description: "Remove invasive plants, repair trails, and learn about native ecosystems.",
+        url: "https://example.com/trail-restoration"
+      },
+      {
+        id: "opp-007",
+        title: "Art for Hospital Kids",
+        org: "Color & Courage",
+        interests: ["Art / Design"],
+        causes: ["Health", "Mental Health"],
+        location: "Los Angeles, CA",
+        remote: true,
+        hoursPerWeek: 2,
+        tags: ["draw", "letters", "care"],
+        description: "Create uplifting art and messages for kids in pediatric wards (digital submissions welcome).",
+        url: "https://example.com/art-for-kids"
+      },
+      {
+        id: "opp-008",
+        title: "Peer Support: Kindness Check-ins",
+        org: "Mindful Circles",
+        interests: ["Community Events"],
+        causes: ["Mental Health"],
+        location: "Remote",
+        remote: true,
+        hoursPerWeek: 1,
+        tags: ["messages", "community", "flexible"],
+        description: "Help write short, positive check-in messages for community members (moderated and safe).",
+        url: "https://example.com/kindness"
+      }
+    ];
+
+    const els = {
+      cards: document.getElementById("cards"),
+      empty: document.getElementById("empty"),
+      title: document.getElementById("title"),
+      sub: document.getElementById("sub"),
+      chips: document.getElementById("chips"),
+
+      profile: document.getElementById("profile"),
+      time: document.getElementById("time"),
+      location: document.getElementById("location"),
+      cause: document.getElementById("cause"),
+      interest: document.getElementById("interest"),
+      remoteOnly: document.getElementById("remoteOnly"),
+
+      featherlessKey: document.getElementById("featherlessKey"),
+      featherlessModel: document.getElementById("featherlessModel"),
+      featherlessBase: document.getElementById("featherlessBase"),
+
+      opennoteKey: document.getElementById("opennoteKey"),
+      opennoteBase: document.getElementById("opennoteBase"),
+      opennoteCount: document.getElementById("opennoteCount"),
+
+      elevenKey: document.getElementById("elevenKey"),
+      voiceId: document.getElementById("voiceId"),
+      ttsModel: document.getElementById("ttsModel"),
+
+      aiMatchBtn: document.getElementById("aiMatchBtn"),
+      aiMatchBtnTop: document.getElementById("aiMatchBtnTop"),
+      aiMatchBtnSide: document.getElementById("aiMatchBtnSide"),
+      demoProfileBtn: document.getElementById("demoProfileBtn"),
+      surpriseBtn: document.getElementById("surpriseBtn"),
+      clearAllBtn: document.getElementById("clearAllBtn"),
+      resetProfileBtn: document.getElementById("resetProfileBtn"),
+
+      favBtn: document.getElementById("favBtn"),
+      favCount: document.getElementById("favCount"),
+      matchCount: document.getElementById("matchCount"),
+      wipeFavBtn: document.getElementById("wipeFavBtn"),
+
+      modalWrap: document.getElementById("modalWrap"),
+      closeModalBtn: document.getElementById("closeModalBtn"),
+      modalTitle: document.getElementById("modalTitle"),
+      aiReason: document.getElementById("aiReason"),
+      aiOutreach: document.getElementById("aiOutreach"),
+      detailsLink: document.getElementById("detailsLink"),
+      copyOutreachBtn: document.getElementById("copyOutreachBtn"),
+      voiceBtn: document.getElementById("voiceBtn"),
+      audio: document.getElementById("audio"),
+
+      flashcardsBtn: document.getElementById("flashcardsBtn"),
+      flashcardsStatus: document.getElementById("flashcardsStatus"),
+      flashcards: document.getElementById("flashcards"),
+      copyFlashcardsBtn: document.getElementById("copyFlashcardsBtn"),
+
+      modalWarn: document.getElementById("modalWarn"),
+      apiHelpBtn: document.getElementById("apiHelpBtn"),
+      deployTipBtn: document.getElementById("deployTipBtn")
+    };
+
+    const STORAGE = {
+      fav: "causecompass:fav:v1",
+      ai: "causecompass:aiCache:v1"
+    };
+
+    const state = {
+      favorites: loadSet(STORAGE.fav),
+      aiRank: null,     // { ranked: [{id, score, reason, outreach, voice_script}], global: {...} }
+      selectedId: null,
+      flashcards: null  // { set_name, flashcards: [{front, back}] }
+    };
+
+    function uniq(arr){ return Array.from(new Set(arr)).sort((a,b)=>a.localeCompare(b)); }
+    function hoursBucket(hours){
+      if (hours <= 2) return "1";
+      if (hours <= 5) return "3";
+      if (hours <= 10) return "6";
+      return "11";
+    }
+
+    function loadSet(key){
+      try{
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return new Set(Array.isArray(parsed) ? parsed : []);
+      }catch{
+        return new Set();
+      }
+    }
+
+    function saveSet(key, set){
+      localStorage.setItem(key, JSON.stringify(Array.from(set)));
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, (ch)=>({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      }[ch]));
+    }
+
+    function bookmarkIcon(){
+      return `
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3.5h10A2.5 2.5 0 0 1 19.5 6v15l-7.5-4.5L4.5 21V6A2.5 2.5 0 0 1 7 3.5Z"
+            stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+      `;
+    }
+
+    function updateBadges(){
+      els.favCount.textContent = String(state.favorites.size);
+      els.matchCount.textContent = state.aiRank?.ranked?.length ? String(state.aiRank.ranked.length) : "—";
+    }
+
+    function populateFilters(){
+      const interests = uniq(OPPORTUNITIES.flatMap(o=>o.interests));
+      const causes = uniq(OPPORTUNITIES.flatMap(o=>o.causes));
+      const locations = uniq(OPPORTUNITIES.map(o=>o.location));
+
+      for(const i of interests) els.interest.append(new Option(i, i));
+      for(const c of causes) els.cause.append(new Option(c, c));
+      for(const l of locations) els.location.append(new Option(l, l));
+    }
+
+    function getFilters(){
+      return {
+        time: els.time.value,
+        location: els.location.value,
+        cause: els.cause.value,
+        interest: els.interest.value,
+        remoteOnly: els.remoteOnly.checked
+      };
+    }
+
+    function filterOpps(filters){
+      return OPPORTUNITIES.filter(o=>{
+        if (filters.time && hoursBucket(o.hoursPerWeek) !== filters.time) return false;
+        if (filters.location && o.location !== filters.location) return false;
+        if (filters.cause && !o.causes.includes(filters.cause)) return false;
+        if (filters.interest && !o.interests.includes(filters.interest)) return false;
+        if (filters.remoteOnly && !o.remote) return false;
+        return true;
+      });
+    }
+
+    function renderChips(filters){
+      els.chips.innerHTML = "";
+      const mapTime = { "1":"1–2 hrs", "3":"3–5 hrs", "6":"6–10 hrs", "11":"10+ hrs" };
+
+      const chips = [];
+      if (filters.time) chips.push({ label:`Time: ${mapTime[filters.time] || filters.time}`, alt:false });
+      if (filters.location) chips.push({ label:`Location: ${filters.location}`, alt:true });
+      if (filters.cause) chips.push({ label:`Cause: ${filters.cause}`, alt:false });
+      if (filters.interest) chips.push({ label:`Interest: ${filters.interest}`, alt:true });
+      if (filters.remoteOnly) chips.push({ label:"Remote only", alt:true });
+
+      for(const c of chips){
+        const el = document.createElement("span");
+        el.className = "chip" + (c.alt ? " alt" : "");
+        el.textContent = c.label;
+        els.chips.appendChild(el);
+      }
+    }
+
+    function renderCards(list){
+      els.cards.innerHTML = "";
+      els.empty.style.display = list.length ? "none" : "block";
+
+      for(const o of list){
+        const ai = state.aiRank?.byId?.[o.id];
+        const score = ai?.score ?? null;
+        const reason = ai?.reason ?? null;
+
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const on = state.favorites.has(o.id);
+
+        const top = document.createElement("div");
+        top.className = "ctop";
+        top.innerHTML = `
+          <div>
+            <h3>${escapeHtml(o.title)}</h3>
+            <div class="org">${escapeHtml(o.org)}</div>
+          </div>
+        `;
+
+        const rank = document.createElement("div");
+        rank.className = "rank";
+        if (score !== null){
+          const s = document.createElement("div");
+          s.className = "score";
+          s.textContent = `AI Score: ${Math.round(score)}/100`;
+          rank.appendChild(s);
+        }
+
+        const bm = document.createElement("button");
+        bm.className = "bookmark";
+        bm.type = "button";
+        bm.setAttribute("data-on", on ? "true" : "false");
+        bm.title = on ? "Remove from favorites" : "Add to favorites";
+        bm.innerHTML = bookmarkIcon();
+        bm.addEventListener("click", (e)=>{
+          e.stopPropagation();
+          toggleFavorite(o.id);
+        });
+
+        rank.appendChild(bm);
+        top.appendChild(rank);
+
+        const body = document.createElement("div");
+        body.className = "cbody";
+
+        const desc = document.createElement("p");
+        desc.className = "desc";
+        desc.textContent = o.description;
+
+        const tagRow = document.createElement("div");
+        tagRow.className = "tag-row";
+
+        const t1 = document.createElement("span");
+        t1.className = "tag p";
+        t1.textContent = o.causes[0] || "Cause";
+        const t2 = document.createElement("span");
+        t2.className = "tag bl";
+        t2.textContent = o.interests[0] || "Interest";
+        const t3 = document.createElement("span");
+        t3.className = "tag";
+        t3.textContent = o.remote ? "Remote" : "In-person";
+
+        tagRow.append(t1,t2,t3);
+
+        if (reason){
+          const why = document.createElement("p");
+          why.className = "desc";
+          why.innerHTML = `<b>Why AI picked this:</b> ${escapeHtml(reason)}`;
+          body.append(desc, tagRow, why);
+        }else{
+          body.append(desc, tagRow);
+        }
+
+        const foot = document.createElement("div");
+        foot.className = "cfoot";
+
+        const where = o.remote ? `${o.location} • Remote` : o.location;
+        const meta = document.createElement("div");
+        meta.className = "mini";
+        meta.innerHTML = `<strong>${escapeHtml(where)}</strong><span>${escapeHtml(o.hoursPerWeek)} hrs/week</span>`;
+
+        const open = document.createElement("button");
+        open.className = "open";
+        open.type = "button";
+        open.textContent = "Open →";
+        open.addEventListener("click", (e)=>{
+          e.stopPropagation();
+          openModal(o.id);
+        });
+
+        foot.append(meta, open);
+
+        card.append(top, body, foot);
+        card.addEventListener("click", ()=>openModal(o.id));
+        els.cards.appendChild(card);
+      }
+    }
+
+    function toggleFavorite(id){
+      if (state.favorites.has(id)) state.favorites.delete(id);
+      else state.favorites.add(id);
+      saveSet(STORAGE.fav, state.favorites);
+      updateBadges();
+      update();
+    }
+
+    function openModal(id){
+      state.selectedId = id;
+      state.flashcards = null;
+
+      const o = OPPORTUNITIES.find(x=>x.id===id);
+      const ai = state.aiRank?.byId?.[id];
+
+      els.modalTitle.textContent = o ? `${o.title} • ${o.org}` : "Opportunity";
+      els.detailsLink.href = o?.url || "#";
+
+      els.aiReason.textContent = ai?.reason
+        ? ai.reason
+        : "No AI ranking yet. Click AI Match to generate ranked reasoning + outreach + voice script.";
+
+      els.aiOutreach.textContent = ai?.outreach || "—";
+      els.audio.style.display = "none";
+      els.audio.pause();
+      els.audio.src = "";
+
+      els.flashcards.innerHTML = "";
+      els.flashcardsStatus.textContent = "—";
+      els.modalWarn.style.display = "none";
+      els.modalWrap.style.display = "grid";
+    }
+
+    function closeModal(){
+      els.modalWrap.style.display = "none";
+    }
+
+    function showWarn(msg){
+      els.modalWarn.style.display = "block";
+      els.modalWarn.textContent = msg;
+    }
+
+    function update(){
+      const filters = getFilters();
+      const base = filterOpps(filters);
+
+      let list = base;
+      if (state.aiRank?.ranked?.length){
+        const rankedIds = state.aiRank.ranked.map(r=>r.id);
+        const inSet = new Set(base.map(o=>o.id));
+        const rankedFiltered = rankedIds.filter(id=>inSet.has(id)).map(id=>OPPORTUNITIES.find(o=>o.id===id)).filter(Boolean);
+        const leftovers = base.filter(o=>!rankedIds.includes(o.id));
+        list = [...rankedFiltered, ...leftovers];
+      }
+
+      els.title.textContent = `${list.length} Match${list.length===1?"":"es"}`;
+      els.sub.textContent = state.aiRank ? "AI-ranked results with reasons + outreach. Open a card for study pack + voice." :
+        "Run AI Match to rank opportunities, then open a card for the generated plan.";
+
+      renderChips(filters);
+      renderCards(list);
+      updateBadges();
+    }
+
+    function saveAiCache(aiRank){
+      try{ localStorage.setItem(STORAGE.ai, JSON.stringify(aiRank)); }catch{}
+    }
+
+    function loadAiCache(){
+      try{
+        const raw = localStorage.getItem(STORAGE.ai);
+        return raw ? JSON.parse(raw) : null;
+      }catch{ return null; }
+    }
+
+    function setLoading(btn, loading){
+      btn.disabled = loading;
+      btn.style.filter = loading ? "grayscale(1) opacity(.75)" : "";
+      btn.textContent = loading ? "Working…" : btn.dataset.label;
+    }
+
+    function buildMatchingPrompt(profileText, filteredOpps){
+      const schema = {
+        ranked: [
+          {
+            id: "opp-001",
+            score: 92,
+            reason: "Short, specific explanation of fit.",
+            outreach: "Short message a student can send to the org.",
+            voice_script: "30-45 second spoken briefing."
+          }
+        ],
+        global: {
+          next_steps: ["Step 1", "Step 2", "Step 3"],
+          cautions: ["One risk/caveat"],
+          personalization_tip: "One extra tip"
+        }
+      };
+
+      const compactOpps = filteredOpps.map(o=>({
+        id: o.id,
+        title: o.title,
+        org: o.org,
+        interests: o.interests,
+        causes: o.causes,
+        location: o.location,
+        remote: o.remote,
+        hoursPerWeek: o.hoursPerWeek,
+        description: o.description
+      }));
+
+      return `
+You are the core matching engine for a volunteer platform.
+Goal: rank opportunities for a student and generate actionable outputs.
+
+Student profile (free text):
+${profileText || "(empty)"}
+
+Opportunities (JSON):
+${JSON.stringify(compactOpps, null, 2)}
+
+Return ONLY valid JSON matching this schema exactly (no markdown, no extra keys):
+${JSON.stringify(schema, null, 2)}
+
+Scoring rules:
+- score is 0-100.
+- prefer realistic time/location fit.
+- reason is <= 2 sentences.
+- outreach is <= 90 words, friendly + specific.
+- voice_script is <= 80 words, energetic and practical.
+- Ranked list length must equal number of input opportunities (rank everything).
+`.trim();
+    }
+
+    async function featherlessAiMatch(){
+      const key = els.featherlessKey.value.trim();
+      const base = els.featherlessBase.value.trim().replace(/\/$/, "");
+      const model = els.featherlessModel.value.trim();
+      const profile = els.profile.value.trim();
+
+      const filters = getFilters();
+      const filtered = filterOpps(filters);
+
+      if (!filtered.length){
+        alert("No opportunities match your filters. Clear some filters and try again.");
+        return;
+      }
+      if (!key){
+        alert("Paste your Featherless API key first.");
+        return;
+      }
+
+      const prompt = buildMatchingPrompt(profile, filtered);
+
+      const payload = {
+        model,
+        temperature: 0.3,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: "You output strictly valid JSON. No markdown." },
+          { role: "user", content: prompt }
+        ]
+      };
+
+      const res = await fetch(`${base}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok){
+        const text = await res.text().catch(()=> "");
+        throw new Error(`Featherless error ${res.status}: ${text.slice(0, 300)}`);
+      }
+
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) throw new Error("No content returned from Featherless.");
+
+      const parsed = safeJsonParse(content);
+      if (!parsed?.ranked?.length) throw new Error("AI response JSON missing ranked list.");
+
+      const byId = {};
+      for (const r of parsed.ranked){
+        if (!r?.id) continue;
+        byId[r.id] = r;
+      }
+
+      const aiRank = { ranked: parsed.ranked, global: parsed.global || null, byId };
+      state.aiRank = aiRank;
+      saveAiCache(aiRank);
+      update();
+    }
+
+    function safeJsonParse(text){
+      try{ return JSON.parse(text); }catch{}
+      // fallback: try to extract first JSON object substring
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      if (start >= 0 && end > start){
+        const slice = text.slice(start, end + 1);
+        try{ return JSON.parse(slice); }catch{}
+      }
+      return null;
+    }
+
+    async function opennoteFlashcardsForSelected(){
+      const o = OPPORTUNITIES.find(x=>x.id===state.selectedId);
+      if (!o) return;
+
+      const key = els.opennoteKey.value.trim();
+      const base = els.opennoteBase.value.trim().replace(/\/$/, "");
+      const count = Number(els.opennoteCount.value || "10");
+
+      if (!key){
+        showWarn("Paste your Opennote API key first (editable key recommended).");
+        return;
+      }
+
+      const ai = state.aiRank?.byId?.[o.id];
+      const why = ai?.reason ? `AI fit: ${ai.reason}` : "AI fit: (not generated yet)";
+      const setDescription =
+`Create a flashcard set for a student volunteering opportunity.
+
+Opportunity:
+- Title: ${o.title}
+- Org: ${o.org}
+- Cause(s): ${o.causes.join(", ")}
+- What you'll do: ${o.description}
+
+Include:
+- key concepts for the cause area
+- practical volunteer skills + safety
+- 2-3 scenario questions ("what would you do if...")
+- short definitions (student-friendly)
+
+Context:
+${why}
+`.trim();
+
+      els.flashcardsStatus.textContent = "Calling Opennote…";
+      els.flashcards.innerHTML = "";
+
+      const res = await fetch(`${base}/interactives/flashcards/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          set_description: setDescription,
+          count,
+          set_name: `Study Pack: ${o.title}`
+        })
+      });
+
+      if (!res.ok){
+        const text = await res.text().catch(()=> "");
+        els.flashcardsStatus.textContent = `Opennote error ${res.status}: ${text.slice(0, 220)}`;
+        return;
+      }
+
+      const data = await res.json();
+      if (!data?.success){
+        els.flashcardsStatus.textContent = `Opennote returned success=false: ${JSON.stringify(data).slice(0, 240)}`;
+        return;
+      }
+
+      state.flashcards = data;
+      els.flashcardsStatus.textContent = `Set: ${data.set_name || "(unnamed)"} • ${data.flashcards?.length || 0} cards`;
+
+      renderFlashcards(data.flashcards || []);
+    }
+
+    function renderFlashcards(cards){
+      els.flashcards.innerHTML = "";
+      for (const c of cards){
+        const el = document.createElement("div");
+        el.className = "fc";
+        el.innerHTML = `<strong>Q:</strong> ${escapeHtml(c.front || "")}<br/><strong>A:</strong> ${escapeHtml(c.back || "")}`;
+        els.flashcards.appendChild(el);
+      }
+    }
+
+    async function elevenLabsVoiceBrief(){
+      const o = OPPORTUNITIES.find(x=>x.id===state.selectedId);
+      if (!o) return;
+
+      const key = els.elevenKey.value.trim();
+      const voiceId = els.voiceId.value.trim();
+      const modelId = els.ttsModel.value.trim() || "eleven_multilingual_v2";
+      if (!key){
+        showWarn("Paste your ElevenLabs xi-api-key first.");
+        return;
+      }
+      if (!voiceId){
+        showWarn("Provide an ElevenLabs voice_id.");
+        return;
+      }
+
+      const ai = state.aiRank?.byId?.[o.id];
+      const script = ai?.voice_script
+        ? ai.voice_script
+        : `Quick brief: ${o.title} at ${o.org}. You'll spend about ${o.hoursPerWeek} hours per week. Location: ${o.location}. Main impact area: ${o.causes[0] || "community"}.`;
+
+      els.voiceBtn.disabled = true;
+      els.voiceBtn.textContent = "Generating…";
+
+      const url = `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}?output_format=mp3_44100_128`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "xi-api-key": key
+        },
+        body: JSON.stringify({
+          text: script,
+          model_id: modelId
+        })
+      });
+
+      els.voiceBtn.disabled = false;
+      els.voiceBtn.textContent = "Voice Brief (ElevenLabs)";
+
+      if (!res.ok){
+        const text = await res.text().catch(()=> "");
+        showWarn(`ElevenLabs error ${res.status}: ${text.slice(0, 240)}`);
+        return;
+      }
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      els.audio.src = audioUrl;
+      els.audio.style.display = "block";
+      els.audio.play().catch(()=>{});
+    }
+
+    function copyText(text){
+      navigator.clipboard?.writeText(text).catch(()=>{});
+    }
+
+    function copyOutreach(){
+      const o = OPPORTUNITIES.find(x=>x.id===state.selectedId);
+      if (!o) return;
+      const ai = state.aiRank?.byId?.[o.id];
+      const msg = ai?.outreach || "";
+      if (!msg) return;
+      copyText(msg);
+    }
+
+    function copyFlashcardsAsQA(){
+      const cards = state.flashcards?.flashcards || [];
+      if (!cards.length) return;
+      const qas = cards.map((c,i)=>`${i+1}. Q: ${c.front}\n   A: ${c.back}`).join("\n\n");
+      copyText(qas);
+    }
+
+    function showFavorites(){
+      const fav = OPPORTUNITIES.filter(o=>state.favorites.has(o.id));
+      if (!fav.length){
+        alert("No favorites yet. Click the bookmark icon on a card.");
+        return;
+      }
+      const lines = fav.map(o=>`• ${o.title} — ${o.org} (${o.location})`).join("\n");
+      alert(`Favorites:\n\n${lines}`);
+    }
+
+    function wipeFavorites(){
+      if (!confirm("Wipe all favorites?")) return;
+      state.favorites = new Set();
+      saveSet(STORAGE.fav, state.favorites);
+      updateBadges();
+      update();
+    }
+
+    function loadDemoProfile(){
+      els.profile.value =
+        "I like tech/coding and I want something that helps education or equity. I have 3-5 hours per week. I prefer remote if possible. I live near Los Angeles. I want something I can put on a resume/portfolio.";
+      els.time.value = "3";
+      els.location.value = "Los Angeles, CA";
+      els.cause.value = "Education";
+      els.interest.value = "Tech / Coding";
+      els.remoteOnly.checked = true;
+      update();
+    }
+
+    function resetProfile(){
+      els.profile.value = "";
+      els.time.value = "";
+      els.location.value = "";
+      els.cause.value = "";
+      els.interest.value = "";
+      els.remoteOnly.checked = false;
+      update();
+    }
+
+    function clearAll(){
+      resetProfile();
+      state.aiRank = null;
+      localStorage.removeItem(STORAGE.ai);
+      updateBadges();
+      update();
+    }
+
+    function surprise(){
+      const all = OPPORTUNITIES.slice();
+      const pick = all[Math.floor(Math.random() * all.length)];
+      els.time.value = hoursBucket(pick.hoursPerWeek);
+      els.location.value = pick.location;
+      els.cause.value = pick.causes[0] || "";
+      els.interest.value = pick.interests[0] || "";
+      els.remoteOnly.checked = pick.remote;
+      if (!els.profile.value.trim()){
+        els.profile.value = `I want to volunteer around ${pick.causes[0] || "my community"} and I like ${pick.interests[0] || "helping out"}.`;
+      }
+      update();
+    }
+
+    function showApiHelp(){
+      alert(
+`Sponsor APIs wired in:
+- Featherless (LLM ranking): baseURL/chat/completions (OpenAI-compatible).
+- Opennote (Study Pack): POST /interactives/flashcards/create
+- ElevenLabs (Voice): POST /v1/text-to-speech/:voice_id
+
+For best judging:
+1) Load Demo Profile
+2) Paste keys
+3) AI Match
+4) Open a card → Generate Flashcards + Voice Brief`
+      );
+    }
+
+    function showXyzTip(){
+      alert(
+`Deploy tip (.XYZ):
+- Put this on your free .XYZ domain and mention it in the demo.
+- Judges love: “live web app + AI ranking + learning pack + voice briefing.”`
+      );
+    }
+
+    async function runAiMatchWithButtons(){
+      const btns = [els.aiMatchBtn, els.aiMatchBtnTop, els.aiMatchBtnSide];
+      for (const b of btns){
+        b.dataset.label = b.dataset.label || b.textContent;
+        setLoading(b, true);
+      }
+      try{
+        await featherlessAiMatch();
+      }catch(err){
+        alert(String(err?.message || err));
+      }finally{
+        for (const b of btns) setLoading(b, false);
+      }
+    }
+
+    function wire(){
+      els.aiMatchBtn.addEventListener("click", runAiMatchWithButtons);
+      els.aiMatchBtnTop.addEventListener("click", runAiMatchWithButtons);
+      els.aiMatchBtnSide.addEventListener("click", runAiMatchWithButtons);
+
+      els.demoProfileBtn.addEventListener("click", loadDemoProfile);
+      els.surpriseBtn.addEventListener("click", surprise);
+      els.clearAllBtn.addEventListener("click", clearAll);
+      els.resetProfileBtn.addEventListener("click", resetProfile);
+
+      for (const el of [els.time, els.location, els.cause, els.interest, els.remoteOnly]){
+        el.addEventListener("change", update);
+        el.addEventListener("input", update);
+      }
+
+      els.favBtn.addEventListener("click", showFavorites);
+      els.wipeFavBtn.addEventListener("click", wipeFavorites);
+
+      els.closeModalBtn.addEventListener("click", closeModal);
+      els.modalWrap.addEventListener("click", (e)=>{ if (e.target === els.modalWrap) closeModal(); });
+      document.addEventListener("keydown", (e)=>{ if (e.key === "Escape") closeModal(); });
+
+      els.flashcardsBtn.addEventListener("click", opennoteFlashcardsForSelected);
+      els.voiceBtn.addEventListener("click", elevenLabsVoiceBrief);
+      els.copyOutreachBtn.addEventListener("click", copyOutreach);
+      els.copyFlashcardsBtn.addEventListener("click", copyFlashcardsAsQA);
+
+      els.apiHelpBtn.addEventListener("click", showApiHelp);
+      els.deployTipBtn.addEventListener("click", showXyzTip);
+    }
+
+    function init(){
+      populateFilters();
+
+      const cached = loadAiCache();
+      if (cached?.ranked?.length && cached?.byId){
+        state.aiRank = cached;
+      }
+
+      updateBadges();
+      wire();
+      update();
+    }
+
+    init();
+  </script>
 </body>
-</html
+</html>
